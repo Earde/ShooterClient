@@ -13,6 +13,8 @@ public class IngameMenu : MonoBehaviour
     public Text fpsCounterText;
     public Text pingText;
 
+    public GameObject hitmarker;
+
     public GameObject settingsMenu;
     public InputField mouseSensitivityInput;
 
@@ -32,6 +34,11 @@ public class IngameMenu : MonoBehaviour
             Debug.Log("Instance already exists, destroying object.");
             Destroy(this);
         }
+    }
+
+    private void Start()
+    {
+        hitmarker.SetActive(false);
     }
 
     private void Update()
@@ -78,5 +85,19 @@ public class IngameMenu : MonoBehaviour
     {
         networkStatusText.text = "";
         //TODO StartCourontine isConnected
+    }
+
+    public void HitMark()
+    {
+        if (hitmarker.activeInHierarchy) return;
+        hitmarker.SetActive(true);
+        StartCoroutine(hitmarkerCooldown());
+    }
+
+    private IEnumerator hitmarkerCooldown()
+    {
+        yield return new WaitForSeconds(0.1f);
+
+        hitmarker.SetActive(false);
     }
 }

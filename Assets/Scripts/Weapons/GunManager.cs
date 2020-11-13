@@ -38,11 +38,12 @@ public class GunManager : MonoBehaviour
                 break;
             }
         }
-        if (newGun >= 0)
+        if (newGun >= 0 && curGun != newGun)
         {
             gunControllers[curGun].SetActive(false);
             curGun = newGun;
             gunControllers[curGun].SetActive(true);
+            ClientSend.PlayerChangeGun(Time.time, curGun);
         }
     }
 }

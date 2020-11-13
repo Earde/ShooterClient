@@ -22,7 +22,7 @@ public class ClientSend : MonoBehaviour
         using (Packet packet = new Packet((int)ClientPackets.welcomeReceived))
         {
             packet.Write(Client.instance.myId);
-            packet.Write("FIX THIS"); //MainMenuManager.instance.usernameField.text
+            packet.Write("fix"); //MainMenuManager.instance.usernameField.text
 
             SendTCPData(packet);
         }
@@ -54,6 +54,17 @@ public class ClientSend : MonoBehaviour
         }
     }
 
+    public static void PlayerChangeGun(float time, int gunId)
+    {
+        using (Packet packet = new Packet((int)ClientPackets.playerChangeGun))
+        {
+            packet.Write(time);
+            packet.Write(gunId);
+
+            SendTCPData(packet);
+        }
+    }
+
     public static void PlayerShoot(Vector3 facing, float time, float enemyTime)
     {
         using (Packet packet = new Packet((int)ClientPackets.playerShoot))
@@ -62,7 +73,7 @@ public class ClientSend : MonoBehaviour
             packet.Write(time);
             packet.Write(enemyTime);
 
-            SendTCPData(packet);
+            SendUDPData(packet);
         }
     }
 

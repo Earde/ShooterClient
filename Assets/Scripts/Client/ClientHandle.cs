@@ -86,6 +86,15 @@ public class ClientHandle : MonoBehaviour
         }
     }
 
+    public static void PlayerHitmark(Packet packet)
+    {
+        int id = packet.ReadInt();
+        if (GameManager.players.ContainsKey(id))
+        {
+            GameManager.players[id].Hitmark();
+        }
+    }
+
     public static void CreateItemSpawner(Packet packet)
     {
         int spawnerId = packet.ReadInt();

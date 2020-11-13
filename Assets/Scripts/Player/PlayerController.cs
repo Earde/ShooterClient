@@ -10,16 +10,21 @@ public class PlayerController : InterpolationController
     public float health;
     public float maxHealth;
     public int itemCount = 0;
-    public SkinnedMeshRenderer model;
-    public GameObject gun;
+
     public GameObject bloodPrefab;
     public int MaxBlood = 10;
 
-    public MoveController moveController = null; //null if not localPlayer
-    public CameraController cameraController = null; //null if not localPlayer
-    public AudioController audioController = null;//null if not localPlayer
+    //null if localPlayer
+    public SkinnedMeshRenderer model;
+
+    //null if not localPlayer
+    public MoveController moveController = null; 
+    public CameraController cameraController = null;
+    public AudioController audioController = null;
 
     private List<GameObject> blood = new List<GameObject>();
+
+    private IngameMenu ingameMenu;
 
     public PlayerController() : base(true, true, 2) { }
 
@@ -38,6 +43,7 @@ public class PlayerController : InterpolationController
         id = _id;
         username = _username;
         health = maxHealth;
+        ingameMenu = GameObject.FindObjectOfType<IngameMenu>();
     }
 
     public bool IsAlive()
@@ -70,17 +76,20 @@ public class PlayerController : InterpolationController
         }
     }
 
+    public void Hitmark()
+    {
+        ingameMenu.HitMark();
+    }
+
     public void Die()
     {
-        audioController.Die();
-        gun.SetActive(false);
-        model.enabled = false;
+        if (audioController != null) audioController.Die();
+        if (model != null) model.enabled = false; //local player is disabled anyway
     }
 
     public void Respawn()
     {
-        gun.SetActive(true);
-        model.enabled = true;
+        if (model != null) model.enabled = true;
         SetHealth(maxHealth);
     }
 }
