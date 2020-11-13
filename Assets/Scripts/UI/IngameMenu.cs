@@ -20,7 +20,7 @@ public class IngameMenu : MonoBehaviour
 
     public float hudRefreshRate = 1.0f;
 
-    private PlayerController localPlayer = null;
+    private LocalPlayerController localPlayer = null;
     private CameraController localCamera = null;
     private bool settingsEnabled = false;
 
@@ -75,7 +75,7 @@ public class IngameMenu : MonoBehaviour
         }
     }
 
-    public void SetLocalPlayer(PlayerController lp)
+    public void SetLocalPlayer(LocalPlayerController lp)
     {
         localPlayer = lp;
         localCamera = localPlayer.cameraController;

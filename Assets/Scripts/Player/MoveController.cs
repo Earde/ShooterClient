@@ -9,7 +9,7 @@ public class MoveController : MonoBehaviour
     public float gravity = -9.81f;
     public float moveSpeed = 5f;
     public float jumpSpeed = 5f;
-    public PlayerController playerController;
+    public LocalPlayerController localPlayerController;
     public CharacterController characterController;
 
     private float saveTime = 3f;
@@ -37,7 +37,7 @@ public class MoveController : MonoBehaviour
 
     private void SendInputToServer(float currentTime)
     {
-        if (playerController.IsAlive())
+        if (localPlayerController.IsAlive())
         {
             bool[] _inputs = new bool[]
             {
@@ -87,7 +87,7 @@ public class MoveController : MonoBehaviour
             }
         }
 
-        playerController.SetNewState(new PlayerState { position = transform.position, time = currentTime, yVelocity = yVelocity });
+        localPlayerController.SetNewState(new PlayerState { position = transform.position, time = currentTime, yVelocity = yVelocity });
     }
 
     private void Move(bool[] inputs, float moveDuration)

@@ -14,19 +14,11 @@ public class PlayerController : InterpolationController
     public GameObject bloodPrefab;
     public int MaxBlood = 10;
 
-    //null if localPlayer
-    public SkinnedMeshRenderer model;
-
-    //null if not localPlayer
-    public MoveController moveController = null; 
-    public CameraController cameraController = null;
-    public AudioController audioController = null;
-
     private List<GameObject> blood = new List<GameObject>();
 
-    private IngameMenu ingameMenu;
-
-    public PlayerController() : base(true, true, 2) { }
+    public PlayerController(bool positionInterpolation, 
+        bool rotationInterpolation,
+        int stateHistoryCount) : base(positionInterpolation, rotationInterpolation, stateHistoryCount) { }
 
     private void Start()
     {
@@ -43,26 +35,11 @@ public class PlayerController : InterpolationController
         id = _id;
         username = _username;
         health = maxHealth;
-        ingameMenu = GameObject.FindObjectOfType<IngameMenu>();
     }
 
     public bool IsAlive()
     {
         return health > 0.0f;
-    }
-
-    public void SetLastAcceptedPosition(PlayerState state)
-    {
-        if (moveController != null) { moveController.SetLastAcceptedPosition(state); }
-        else { SetNewState(state); }
-    }
-
-    public void SetHealth(float _health)
-    {
-        if (_health < health && audioController != null) audioController.TakeDamage();
-        health = _health;
-
-        if (health <= 0f) Die();
     }
 
     public void TakeShot(Vector3 position, Vector3 view)
@@ -76,20 +53,21 @@ public class PlayerController : InterpolationController
         }
     }
 
-    public void Hitmark()
+    public virtual void SetLastAcceptedPosition(PlayerState state) { }
+
+    public virtual void SetHealth(float _health)
     {
-        ingameMenu.HitMark();
+        health = _health;
+
+        if (health <= 0f) Die();
     }
 
-    public void Die()
-    {
-        if (audioController != null) audioController.Die();
-        if (model != null) model.enabled = false; //local player is disabled anyway
-    }
+    public virtual void Hitmark() { }
 
-    public void Respawn()
+    public virtual void Die() { }
+
+    public virtual void Respawn()
     {
-        if (model != null) model.enabled = true;
         SetHealth(maxHealth);
     }
 }

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ShootController : MonoBehaviour
+public class ThrowController : MonoBehaviour
 {
     public Transform camTransform;
-    public PlayerController playerManager;
+    public LocalPlayerController localPlayerController;
     public float throwCooldown = 3.0f;
 
     private bool readyToThrow = true;
@@ -18,7 +18,7 @@ public class ShootController : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse1) && playerManager.IsAlive() && readyToThrow)
+        if (Input.GetKeyDown(KeyCode.Mouse1) && localPlayerController.IsAlive() && readyToThrow)
         {
             readyToThrow = false;
             ClientSend.PlayerThrowItem(camTransform.forward);

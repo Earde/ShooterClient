@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
         {
             Camera.main.gameObject.SetActive(false);
             player = Instantiate(localPlayerPrefab, position, rotation);
-            inGameMenu.SetLocalPlayer(player.GetComponent<PlayerController>());
+            inGameMenu.SetLocalPlayer(player.GetComponent<LocalPlayerController>());
         } 
         else
         {
