@@ -14,9 +14,6 @@ public class MainMenuManager : MonoBehaviour
 
     public SceneLoader sceneLoader;
 
-    //public Text healthText;
-    //private PlayerController localPlayer = null;
-
     private void Start()
     {
         startMenu.SetActive(true);
@@ -51,11 +48,5 @@ public class MainMenuManager : MonoBehaviour
         usernameField.interactable = false;
 
         sceneLoader.LoadLevel(level);
-        //Client.instance.ConnectToServer();
     }
-
-    //public void SetLocalPlayer(PlayerController lp)
-    //{
-    //    localPlayer = lp;
-    //}
 }

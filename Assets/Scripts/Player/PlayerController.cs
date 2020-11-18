@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class PlayerController : InterpolationController
+public abstract class PlayerController : InterpolationController
 {
     public int id;
     public string username;
@@ -11,14 +11,16 @@ public class PlayerController : InterpolationController
     public float maxHealth;
     public int itemCount = 0;
 
+    public SkinnedMeshRenderer meshRenderer;
+
     public GameObject bloodPrefab;
     public int MaxBlood = 10;
 
     private List<GameObject> blood = new List<GameObject>();
 
-    public PlayerController(bool positionInterpolation, 
-        bool rotationInterpolation,
-        int stateHistoryCount) : base(positionInterpolation, rotationInterpolation, stateHistoryCount) { }
+    public PlayerController(bool isLocalPlayer,
+        bool positionInterpolation, 
+        bool rotationInterpolation) : base(isLocalPlayer, positionInterpolation, rotationInterpolation) { }
 
     private void Start()
     {
@@ -53,21 +55,22 @@ public class PlayerController : InterpolationController
         }
     }
 
-    public virtual void SetLastAcceptedPosition(PlayerState state) { }
-
     public virtual void SetHealth(float _health)
     {
         health = _health;
-
         if (health <= 0f) Die();
     }
-
-    public virtual void Hitmark() { }
-
-    public virtual void Die() { }
 
     public virtual void Respawn()
     {
         SetHealth(maxHealth);
     }
+
+    public abstract void ChangeColor();
+
+    public abstract void SetLastAcceptedPosition(PlayerState state);
+
+    public abstract void Hitmark();
+
+    public abstract void Die();
 }

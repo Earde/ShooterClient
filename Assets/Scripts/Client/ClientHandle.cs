@@ -14,7 +14,6 @@ public class ClientHandle : MonoBehaviour
         Client.instance.myId = myId;
         Client.instance.SetWelcomeReceived();
         Debug.Log($"My ID: {myId}.");
-        ClientSend.WelcomeReceived();
 
         Client.instance.udp.Connect(((IPEndPoint)Client.instance.tcp.socket.Client.LocalEndPoint).Port);
     }
@@ -39,21 +38,12 @@ public class ClientHandle : MonoBehaviour
     {
         int id = packet.ReadInt();
         Vector3 _position = packet.ReadVector3();
+        Quaternion _rotation = packet.ReadQuaternion();
         float _yVelocity = packet.ReadFloat();
         float _time = packet.ReadFloat();
         if (GameManager.players.ContainsKey(id))
         {
-            GameManager.players[id].SetLastAcceptedPosition(new PlayerState { position = _position, time = _time, yVelocity = _yVelocity });
-        }
-    }
-
-    public static void PlayerRotation(Packet packet)
-    {
-        int id = packet.ReadInt();
-        Quaternion rotation = packet.ReadQuaternion();
-        if (GameManager.players.ContainsKey(id))
-        {
-            GameManager.players[id].SetNewRotation(rotation);
+            GameManager.players[id].SetLastAcceptedPosition(new PlayerState { position = _position, rotation = _rotation, time = _time, yVelocity = _yVelocity });
         }
     }
 
@@ -145,7 +135,7 @@ public class ClientHandle : MonoBehaviour
         Vector3 _position = packet.ReadVector3();
         if (GameManager.projectiles.ContainsKey(projectileId))
         {
-            GameManager.projectiles[projectileId].SetNewState(new PlayerState { position = _position, time = Time.time, yVelocity = 0 });
+            GameManager.projectiles[projectileId].AddPlayerState(new PlayerState { position = _position, time = Time.time, yVelocity = 0 });
         }
     }
 

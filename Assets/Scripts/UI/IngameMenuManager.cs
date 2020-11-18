@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class IngameMenu : MonoBehaviour
+public class IngameMenuManager : MonoBehaviour
 {
-    public static IngameMenu instance;
+    public static IngameMenuManager instance;
 
     public GameObject ingameMenu;
     public Text healthText;
@@ -21,7 +21,6 @@ public class IngameMenu : MonoBehaviour
     public float hudRefreshRate = 1.0f;
 
     private LocalPlayerController localPlayer = null;
-    private CameraController localCamera = null;
     private bool settingsEnabled = false;
 
     private float timer;
@@ -64,21 +63,27 @@ public class IngameMenu : MonoBehaviour
         settingsEnabled = !settingsEnabled;
         settingsMenu.SetActive(settingsEnabled);
         ingameMenu.SetActive(!settingsEnabled);
-        localCamera.ToggleCursorMode(!settingsEnabled);
+        localPlayer.cameraController.ToggleCursorMode(!settingsEnabled);
     }
 
     public void SetMouseSensitivity()
     {
         if (float.TryParse(mouseSensitivityInput.text, out float sens))
         {
-            localCamera.SetMouseSensitivity(sens);
+            localPlayer.cameraController.SetMouseSensitivity(sens);
         }
     }
 
     public void SetLocalPlayer(LocalPlayerController lp)
     {
         localPlayer = lp;
-        localCamera = localPlayer.cameraController;
+        UpdateSettings();
+    }
+
+    public void UpdateSettings()
+    {
+        mouseSensitivityInput.text = "1,0";
+        SetMouseSensitivity();
     }
 
     public void DisableIsConnecting()
@@ -91,10 +96,10 @@ public class IngameMenu : MonoBehaviour
     {
         if (hitmarker.activeInHierarchy) return;
         hitmarker.SetActive(true);
-        StartCoroutine(hitmarkerCooldown());
+        StartCoroutine(HitmarkerCooldown());
     }
 
-    private IEnumerator hitmarkerCooldown()
+    private IEnumerator HitmarkerCooldown()
     {
         yield return new WaitForSeconds(0.1f);
 

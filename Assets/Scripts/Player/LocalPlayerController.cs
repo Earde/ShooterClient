@@ -9,19 +9,11 @@ public class LocalPlayerController : PlayerController
     public CameraController cameraController;
     public AudioController audioController;
 
-    private IngameMenu ingameMenu;
-
-    public LocalPlayerController() : base(true, true, 2) { }
-
-    private void Start()
-    {
-        ingameMenu = GameObject.FindObjectOfType<IngameMenu>();
-    }
+    public LocalPlayerController() : base(true, true, false) { }
 
     public override void SetLastAcceptedPosition(PlayerState state)
     {
         moveController.SetLastAcceptedPosition(state);
-        base.SetLastAcceptedPosition(state);
     }
 
     public override void SetHealth(float _health)
@@ -32,17 +24,21 @@ public class LocalPlayerController : PlayerController
 
     public override void Hitmark()
     {
-        ingameMenu.HitMark();
+        IngameMenuManager.instance.HitMark();
     }
 
     public override void Die()
     {
         audioController.Die();
-        base.Die();
     }
 
     public override void Respawn()
     {
         base.Respawn();
+    }
+
+    public override void ChangeColor()
+    {
+        //TODO: Change color based on missing health
     }
 }

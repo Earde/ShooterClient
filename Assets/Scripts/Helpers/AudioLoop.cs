@@ -16,6 +16,7 @@ public class AudioLoop : MonoBehaviour
             audioSources.Add(audio);
         }
         currentSong = Random.Range(0, audioSources.Count);
+        audioSources[currentSong].Play();
         StartCoroutine(PlaySong());
     }
 
@@ -29,6 +30,7 @@ public class AudioLoop : MonoBehaviour
     private IEnumerator PlaySong()
     {
         yield return new WaitForSeconds(2.5f);
+
         if (!audioSources[currentSong].isPlaying) NextMenuSong();
         StartCoroutine(PlaySong());
     }

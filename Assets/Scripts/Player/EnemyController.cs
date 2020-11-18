@@ -5,13 +5,11 @@ using UnityEngine;
 
 public class EnemyController : PlayerController
 {
-    public SkinnedMeshRenderer model;
-
-    public EnemyController() : base(true, true, 2) { }
+    public EnemyController() : base(false, true, true) { }
 
     public override void SetLastAcceptedPosition(PlayerState state)
     {
-        SetNewState(state);
+        AddPlayerState(state);
     }
 
     public override void SetHealth(float _health)
@@ -19,20 +17,21 @@ public class EnemyController : PlayerController
         base.SetHealth(_health);
     }
 
-    public override void Hitmark()
-    {
-        base.Hitmark();
-    }
-
     public override void Die()
     {
-        model.enabled = false; //local player is disabled anyway
-        base.Die();
+        meshRenderer.enabled = false;
     }
 
     public override void Respawn()
     {
-        model.enabled = true;
+        meshRenderer.enabled = true;
         base.Respawn();
     }
+
+    public override void ChangeColor()
+    {
+        meshRenderer.sharedMaterial.SetColor("_BaseColor", Color.green);
+    }
+
+    public override void Hitmark() { }
 }

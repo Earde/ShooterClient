@@ -5,9 +5,9 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     public LocalPlayerController player;
-    public float sensitivity = 100f;
     public float clampAngle = 85f;
 
+    private float sensitivity = 2.0f;
     private float verticalRotation;
     private float horizontalRotation;
 
@@ -20,14 +20,12 @@ public class CameraController : MonoBehaviour
     {
         verticalRotation = transform.localEulerAngles.x;
         horizontalRotation = player.transform.eulerAngles.y;
-        player.SetRotationInterpolation(false);
         ToggleCursorMode(true);
     }
 
     private void Update()
     {
         if (Cursor.lockState == CursorLockMode.Locked) { Look(); }
-        Debug.DrawRay(transform.position, transform.forward * 2, Color.red);
     }
 
     private void Look()

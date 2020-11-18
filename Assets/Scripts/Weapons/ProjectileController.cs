@@ -7,7 +7,7 @@ public class ProjectileController : InterpolationController
     public int id;
     public GameObject explosionPrefab;
 
-    public ProjectileController() : base(true, false, 2) { }
+    public ProjectileController() : base(false, true, false) { }
 
     public void Initialize(int _id)
     {

@@ -15,8 +15,6 @@ public class GameManager : MonoBehaviour
     public GameObject itemSpawnerPrefab;
     public GameObject projectilePrefab;
 
-    public IngameMenu inGameMenu;
-
     private void Awake()
     {
         if (instance == null)
@@ -37,7 +35,7 @@ public class GameManager : MonoBehaviour
         {
             Camera.main.gameObject.SetActive(false);
             player = Instantiate(localPlayerPrefab, position, rotation);
-            inGameMenu.SetLocalPlayer(player.GetComponent<LocalPlayerController>());
+            IngameMenuManager.instance.SetLocalPlayer(player.GetComponent<LocalPlayerController>());
         } 
         else
         {

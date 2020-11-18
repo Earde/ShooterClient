@@ -28,6 +28,8 @@ public class GunController : MonoBehaviour
     public bool playSound = true;
     public bool loopShooting = false;
 
+    public float enemyDelay = 0.1f;
+
     private float curRecoil = 0.0f;
 
     private GameObject flash = null;
@@ -81,7 +83,7 @@ public class GunController : MonoBehaviour
         isReadyToShoot = false;
         StartCoroutine(ShootCooldown());
         // Send shot to network
-        ClientSend.PlayerShoot(cam.transform.forward, Time.time, GetPlayersTime());
+        ClientSend.PlayerShoot(cam.transform.forward, Time.time, enemyDelay);
         // Sound
         if (playSound) shootSound.Play();
         // Muzzle flash position
@@ -100,20 +102,6 @@ public class GunController : MonoBehaviour
                 hit.collider.GetComponent<PlayerController>().TakeShot(hit.point, hit.normal);
             }
         }
-    }
-
-    private float GetPlayersTime()
-    {
-        float time = -1.0f;
-        foreach (PlayerController p in GameManager.players.Values)
-        {
-            if (p == null || p.id == Client.instance.myId) continue;
-            if (p.GetCurrentStateTime() > time)
-            {
-                time = p.GetCurrentStateTime();
-            }
-        }
-        return time < 0.0f ? Time.time : time;
     }
 
     private float GetRecoilInc()

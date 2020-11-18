@@ -17,12 +17,12 @@ public class ClientSend : MonoBehaviour
     }
 
     #region Packets
-    public static void WelcomeReceived()
+    public static void WelcomeReceived(string name)
     {
         using (Packet packet = new Packet((int)ClientPackets.welcomeReceived))
         {
             packet.Write(Client.instance.myId);
-            packet.Write("fix"); //MainMenuManager.instance.usernameField.text
+            packet.Write(name);
 
             SendTCPData(packet);
         }
@@ -65,13 +65,13 @@ public class ClientSend : MonoBehaviour
         }
     }
 
-    public static void PlayerShoot(Vector3 facing, float time, float enemyTime)
+    public static void PlayerShoot(Vector3 facing, float time, float enemyDelay)
     {
         using (Packet packet = new Packet((int)ClientPackets.playerShoot))
         {
             packet.Write(facing);
             packet.Write(time);
-            packet.Write(enemyTime);
+            packet.Write(time + enemyDelay);
 
             SendUDPData(packet);
         }

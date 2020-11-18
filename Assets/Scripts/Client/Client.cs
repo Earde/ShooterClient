@@ -16,15 +16,9 @@ public class Client : MonoBehaviour
     public TCP tcp;
     public UDP udp;
 
-    public IngameMenu inGameMenu;
-
-    private bool isWelcomeReceived = false;
     private bool isConnected = false;
     private delegate void PacketHandler(Packet packet);
     private static Dictionary<int, PacketHandler> packetHandlers;
-    
-    private float TimeSyncCooldown = 1f;
-    private int RttsCount = 3;
 
     private void Awake()
     {
@@ -47,8 +41,13 @@ public class Client : MonoBehaviour
 
     public void SetWelcomeReceived()
     {
-        isWelcomeReceived = true;
-        inGameMenu.DisableIsConnecting();
+        IngameMenuManager.instance.DisableIsConnecting();
+        string name = "DEBUG";
+        if (MainMenuManager.instance != null)
+        {
+            name = MainMenuManager.instance.usernameField.text;
+        }
+        ClientSend.WelcomeReceived(name);
     }
 
     public void ConnectToServer()
@@ -71,7 +70,6 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.timeSync, ClientHandle.SyncTime },
             { (int)ServerPackets.spawnPlayer, ClientHandle.SpawnPlayer },
             { (int)ServerPackets.playerPosition, ClientHandle.PlayerPosition },
-            { (int)ServerPackets.playerRotation, ClientHandle.PlayerRotation },
             { (int)ServerPackets.playerDisconnected, ClientHandle.PlayerDisconnected },
             { (int)ServerPackets.playerHealth, ClientHandle.PlayerHealth },
             { (int)ServerPackets.playerRespawn, ClientHandle.PlayerRespawned },
