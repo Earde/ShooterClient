@@ -43,7 +43,7 @@ public class ClientHandle : MonoBehaviour
         float _time = packet.ReadFloat();
         if (GameManager.players.ContainsKey(id))
         {
-            GameManager.players[id].SetLastAcceptedPosition(new PlayerState { position = _position, rotation = _rotation, time = _time, yVelocity = _yVelocity });
+            GameManager.players[id].SetLastAcceptedPosition(new PlayerState { _position = _position, _rotation = _rotation, _time = _time, _yVelocity = _yVelocity });
         }
     }
 
@@ -135,7 +135,7 @@ public class ClientHandle : MonoBehaviour
         Vector3 _position = packet.ReadVector3();
         if (GameManager.projectiles.ContainsKey(projectileId))
         {
-            GameManager.projectiles[projectileId].AddPlayerState(new PlayerState { position = _position, time = Time.time, yVelocity = 0 });
+            GameManager.projectiles[projectileId].AddPlayerState(new PlayerState { _position = _position, _time = Time.time, _yVelocity = 0 });
         }
     }
 

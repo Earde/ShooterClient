@@ -95,11 +95,18 @@ public class GunController : MonoBehaviour
 
     private void LocalHit()
     {
-        if (Physics.Raycast(cam.transform.position, cam.transform.forward, out RaycastHit hit, 10000f))
+        RaycastHit[] hits = Physics.RaycastAll(cam.transform.position, cam.transform.forward, 1000f);
+        hits = hits.OrderBy(h => h.distance).ToArray();
+        for (int i = 0; i < hits.Length; i++)
         {
-            if (hit.collider.CompareTag("Enemy"))
+            if (hits[i].collider.CompareTag("Enemy"))
             {
-                hit.collider.GetComponent<PlayerController>().TakeShot(hit.point, hit.normal);
+                hits[i].collider.GetComponentInParent<EnemyController>().TakeShot(hits[i].point + hits[i].normal * 0.001f, Quaternion.FromToRotation(Vector3.up, hits[i].normal));
+            }
+            else if (hits[i].collider.GetType() == typeof(MeshCollider) && hits[i].transform.gameObject.layer == LayerMask.NameToLayer("Map"))
+            {
+                DecalManager.instance.SetBulletDecal(hits[i].point + hits[i].normal * 0.001f, Quaternion.FromToRotation(Vector3.back, hits[i].normal));
+                break;
             }
         }
     }

@@ -12,14 +12,15 @@ public class MoveController : MonoBehaviour
     public LocalPlayerController localPlayerController;
     public CharacterController characterController;
 
-    private float saveTime = 3f;
+    private float saveTime = 1f;
     private float yVelocity = 0f;
     private List<UserInput> inputList = new List<UserInput>();
     private PlayerState serverState;
 
     private void Start()
     {
-        serverState = new PlayerState { position = transform.position, rotation = transform.rotation, time = Time.time, yVelocity = yVelocity };
+        serverState = new PlayerState { _position = transform.position, _rotation = transform.rotation, _time = Time.time, _yVelocity = yVelocity };
+        Debug.Log(Time.fixedDeltaTime);
     }
 
     /// <summary>
@@ -28,7 +29,7 @@ public class MoveController : MonoBehaviour
     /// <param name="state"></param>
     public void SetLastAcceptedPosition(PlayerState state)
     {
-        if (state != null && state.time > serverState.time) serverState = state;
+        if (state != null || state._time > serverState._time) serverState = state;
     }
 
     private void FixedUpdate()
@@ -55,7 +56,12 @@ public class MoveController : MonoBehaviour
                 Input.GetKey(KeyCode.D),
                 Input.GetKey(KeyCode.Space)
             };
-            UserInput input = new UserInput { inputs = _inputs, tForward = transform.forward, tRight = transform.right, time = currentTime };
+            UserInput input = new UserInput { 
+                inputs = _inputs, 
+                tForward = new Vector3(transform.forward.x, transform.forward.y, transform.forward.z), 
+                tRight = new Vector3(transform.right.x, transform.right.y, transform.right.z), 
+                time = currentTime 
+            };
             inputList.Add(input);
             ClientSend.PlayerMovement(input.inputs, transform.rotation, input.time);
         }
@@ -69,44 +75,48 @@ public class MoveController : MonoBehaviour
     {
         currentTime += Time.fixedDeltaTime;
 
-        //Set last accepted server position
+        Quaternion curRotation = transform.rotation;
+
+        //Set last accepted server information
         characterController.enabled = false;
-        characterController.transform.position = serverState.position;
-        yVelocity = serverState.yVelocity;
+        characterController.transform.position = serverState._position;
+        characterController.transform.rotation = serverState._rotation;
+        yVelocity = serverState._yVelocity;
         characterController.enabled = true;
+        characterController.Move(Vector3.zero); //Reset isGrounded
 
         //Execute all unprocessed inputs
         if (inputList.Count > 0)
         {
-            List<UserInput> movesToProcess = inputList.Where(a => a.time >= serverState.time).OrderBy(x => x.time).ToList();
-            //Finish move before playerState
-            float moveTime = movesToProcess.Count > 0 ? movesToProcess[0].time : currentTime;
-            moveTime -= serverState.time;
-            UserInput previousTick = inputList.Where(a => a.time < serverState.time).OrderByDescending(x => x.time).FirstOrDefault();
-            if (previousTick != default && previousTick != null)
+            List<UserInput> movesAfterTick = inputList.Where(a => a.time > serverState._time).OrderBy(x => x.time).ToList();
+            UserInput movePreTick = inputList.Where(a => a.time <= serverState._time).OrderByDescending(x => x.time).FirstOrDefault();
+            if (movePreTick != default && movePreTick != null)
             {
-                Move(previousTick.inputs, previousTick.tRight, previousTick.tForward, moveTime);
+                movePreTick.time = serverState._time;
+                movesAfterTick.Insert(0, movePreTick);
             }
-            //Do moves after playerState
-            if (movesToProcess.Count > 0)
+            float moveTime = 0.0f;
+            if (movesAfterTick.Count > 0)
             {
-                for (int i = 0; i < movesToProcess.Count; i++)
+                for (int i = 0; i < movesAfterTick.Count; i++)
                 {
-                    if (i == movesToProcess.Count - 1)
+                    if (i == movesAfterTick.Count - 1)
                     {
-                        moveTime = currentTime - movesToProcess[i].time;
-                        Move(movesToProcess[i].inputs, transform.right, transform.forward, moveTime);
+                        moveTime = currentTime - movesAfterTick[i].time;
+                        Move(movesAfterTick[i].inputs, transform.right, transform.forward, moveTime);
                     }
                     else
                     {
-                        moveTime = movesToProcess[i + 1].time - movesToProcess[i].time;
-                        Move(movesToProcess[i].inputs, movesToProcess[i].tRight, movesToProcess[i].tForward, moveTime);
+                        moveTime = movesAfterTick[i + 1].time - movesAfterTick[i].time;
+                        Move(movesAfterTick[i].inputs, movesAfterTick[i].tRight, movesAfterTick[i].tForward, moveTime);
                     }
                 }
             }
         }
 
-        localPlayerController.AddPlayerState(new PlayerState { position = transform.position, rotation = transform.rotation, time = currentTime, yVelocity = yVelocity });
+        transform.rotation = curRotation;
+
+        localPlayerController.AddPlayerState(new PlayerState { _position = transform.position, _rotation = transform.rotation, _time = currentTime, _yVelocity = yVelocity });
     }
 
     /// <summary>
@@ -137,7 +147,7 @@ public class MoveController : MonoBehaviour
         }
         if (_inputDirection.magnitude > 1.5f)
         {
-            _inputDirection *= 0.7071f; //Keer wortel van 0.5 om _inputDirection.magnitude van 1 te krijgen
+            _inputDirection *= 0.7071f; //Keer door de wortel van 0.5 = 0.7071 om _inputDirection.magnitude van 1 te krijgen
         }
 
         Vector3 moveDirection = (tRight * _inputDirection.x * moveSpeed) + (tForward * _inputDirection.y * moveSpeed);

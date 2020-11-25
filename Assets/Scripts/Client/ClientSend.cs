@@ -71,7 +71,7 @@ public class ClientSend : MonoBehaviour
         {
             packet.Write(facing);
             packet.Write(time);
-            packet.Write(time + enemyDelay);
+            packet.Write(enemyDelay);
 
             SendUDPData(packet);
         }

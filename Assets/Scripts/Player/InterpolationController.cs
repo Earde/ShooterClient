@@ -9,6 +9,8 @@ public class InterpolationController : MonoBehaviour
     private bool posEnabled;
     private bool rotEnabled;
 
+    private float saveTime = 1.0f;
+
     private float delay = 0.1f;
 
     private bool isLocalPlayer;
@@ -24,9 +26,11 @@ public class InterpolationController : MonoBehaviour
         rotEnabled = rotationInterpolation;
         for (int i = 0; i < 10; i++)
         {
-            states.Add(new PlayerState { position = Vector3.zero, time = 0.0f });
+            states.Add(new PlayerState { _position = Vector3.zero, _rotation = Quaternion.identity, _yVelocity = 0.0f, _time = 0.0f });
         }
     }
+
+    protected virtual void Start() { }
 
     private void Update()
     {
@@ -45,7 +49,7 @@ public class InterpolationController : MonoBehaviour
     public void AddPlayerState(PlayerState newState)
     {
         states.Add(newState);
-        states.RemoveAll(x => x.time < Time.time - 1f);
+        states.RemoveAll(x => x._time < Time.time - saveTime);
     }
 
     /// <summary>
@@ -55,12 +59,12 @@ public class InterpolationController : MonoBehaviour
     /// <returns></returns>
     private Vector3 GetCurrentPosition(float time)
     {
-        PlayerState fromState = states.Where(s => s.time < time).OrderByDescending(x => x.time).FirstOrDefault();
+        PlayerState fromState = states.Where(s => s._time < time).OrderByDescending(x => x._time).FirstOrDefault();
         if (fromState == default || fromState == null) return transform.position;
-        PlayerState toState = states.Where(s => s.time >= time).OrderBy(x => x.time).FirstOrDefault();
-        if (toState == default || toState == null) return fromState.position;
-        float lerp = (time - fromState.time) / (toState.time - fromState.time);
-        return Vector3.Lerp(fromState.position, toState.position, lerp);
+        PlayerState toState = states.Where(s => s._time >= time).OrderBy(x => x._time).FirstOrDefault();
+        if (toState == default || toState == null) return fromState._position;
+        float lerp = (time - fromState._time) / (toState._time - fromState._time);
+        return Vector3.Lerp(fromState._position, toState._position, lerp);
     }
 
     /// <summary>
@@ -70,12 +74,12 @@ public class InterpolationController : MonoBehaviour
     /// <returns></returns>
     private Quaternion GetCurrentRotation(float time)
     {
-        PlayerState fromState = states.Where(s => s.time < time).OrderByDescending(x => x.time).FirstOrDefault();
+        PlayerState fromState = states.Where(s => s._time < time).OrderByDescending(x => x._time).FirstOrDefault();
         if (fromState == default || fromState == null) return transform.rotation;
-        PlayerState toState = states.Where(s => s.time >= time).OrderBy(x => x.time).FirstOrDefault();
-        if (toState == default || toState == null) return fromState.rotation;
-        float lerp = (time - fromState.time) / (toState.time - fromState.time);
-        return Quaternion.Lerp(fromState.rotation, toState.rotation, lerp);
+        PlayerState toState = states.Where(s => s._time >= time).OrderBy(x => x._time).FirstOrDefault();
+        if (toState == default || toState == null) return fromState._rotation;
+        float lerp = (time - fromState._time) / (toState._time - fromState._time);
+        return Quaternion.Lerp(fromState._rotation, toState._rotation, lerp);
     }
 
     public Vector2 GetCurrentMovingDirection()

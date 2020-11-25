@@ -12,25 +12,11 @@ public abstract class PlayerController : InterpolationController
     public int itemCount = 0;
 
     public SkinnedMeshRenderer meshRenderer;
-
-    public GameObject bloodPrefab;
-    public int MaxBlood = 10;
-
-    private List<GameObject> blood = new List<GameObject>();
+    public GameObject colliders;
 
     public PlayerController(bool isLocalPlayer,
         bool positionInterpolation, 
         bool rotationInterpolation) : base(isLocalPlayer, positionInterpolation, rotationInterpolation) { }
-
-    private void Start()
-    {
-        for (int i = 0; i < MaxBlood; i++)
-        {
-            GameObject b = Instantiate(bloodPrefab);
-            b.SetActive(false);
-            blood.Add(b);
-        }
-    }
 
     public void Initialize(int _id, string _username)
     {
@@ -42,17 +28,6 @@ public abstract class PlayerController : InterpolationController
     public bool IsAlive()
     {
         return health > 0.0f;
-    }
-
-    public void TakeShot(Vector3 position, Vector3 view)
-    {
-        GameObject b = blood.FirstOrDefault(bl => !bl.activeInHierarchy);
-        if (b != default)
-        {
-            b.transform.position = position;
-            b.transform.rotation.SetLookRotation(view);
-            b.SetActive(true);
-        }
     }
 
     public virtual void SetHealth(float _health)
