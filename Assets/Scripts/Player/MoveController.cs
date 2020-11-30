@@ -20,7 +20,6 @@ public class MoveController : MonoBehaviour
     private void Start()
     {
         serverState = new PlayerState { _position = transform.position, _rotation = transform.rotation, _time = Time.time, _yVelocity = yVelocity };
-        Debug.Log(Time.fixedDeltaTime);
     }
 
     /// <summary>
@@ -147,7 +146,7 @@ public class MoveController : MonoBehaviour
         }
         if (_inputDirection.magnitude > 1.5f)
         {
-            _inputDirection *= 0.7071f; //Keer door de wortel van 0.5 = 0.7071 om _inputDirection.magnitude van 1 te krijgen
+            _inputDirection *= 0.7071f; //Keer door (wortel van 0.5 = 0.7071) om _inputDirection.magnitude van 1 te krijgen
         }
 
         Vector3 moveDirection = (tRight * _inputDirection.x * moveSpeed) + (tForward * _inputDirection.y * moveSpeed);

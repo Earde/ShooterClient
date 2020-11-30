@@ -5,16 +5,23 @@ using UnityEngine;
 
 public class EnemyController : PlayerController
 {
+    public EnemyGunController gunController;
+
     public GameObject bloodPrefab;
     public int MaxBlood = 10;
 
     private List<GameObject> blood = new List<GameObject>();
 
+    public EnemyAnimationController animationController;
+
+    private float colorLerpTime = 10f;
+    private float colorTime = 0.0f;
+    private bool colorUp = true;
+
     public EnemyController() : base(false, true, true) { }
 
     protected override void Start()
     {
-        ChangeColor();
         for (int i = 0; i < MaxBlood; i++)
         {
             GameObject b = Instantiate(bloodPrefab);
@@ -23,6 +30,18 @@ public class EnemyController : PlayerController
             blood.Add(b);
         }
         base.Start();
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        animationController.Move(movementDelta, this.transform.forward);
+        ChangeColor();
+    }
+
+    public void Shoot(float time, Vector3 pos, Vector3 forw)
+    {
+        gunController.AddShot(time, pos, forw, id);
     }
 
     public void TakeShot(Vector3 hitPoint, Quaternion hitRotation)
@@ -62,9 +81,13 @@ public class EnemyController : PlayerController
 
     public override void ChangeColor()
     {
+        if (colorUp) colorTime += Time.deltaTime;
+        else colorTime -= Time.deltaTime;
+        if (colorTime < 0.0f || colorTime >= colorLerpTime) colorUp = !colorUp;
+
         foreach (Material mat in meshRenderer.materials)
         {
-            mat.SetColor("_BaseColor", Color.green);
+            mat.SetColor("_BaseColor", Color.Lerp(Color.green, Color.red, colorTime / colorLerpTime));
         }
     }
 

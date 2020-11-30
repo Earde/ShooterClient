@@ -11,7 +11,7 @@ public class GunManager : MonoBehaviour
     public Camera cam;
     public GameObject[] guns;
 
-    private List<GunController> gunControllers = new List<GunController>();
+    private List<PlayerGunController> gunControllers = new List<PlayerGunController>();
     private int curGun = 0;
 
     private void Start()
@@ -19,7 +19,7 @@ public class GunManager : MonoBehaviour
         foreach (GameObject gun in guns)
         {
             GameObject g = Instantiate(gun);
-            GunController gc = g.GetComponent<GunController>();
+            PlayerGunController gc = g.GetComponent<PlayerGunController>();
             gc.Initialize(cam, weaponHolder);
             gc.SetActive(false);
             gunControllers.Add(gc);

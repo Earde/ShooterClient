@@ -14,6 +14,11 @@ public abstract class PlayerController : InterpolationController
     public SkinnedMeshRenderer meshRenderer;
     public GameObject colliders;
 
+    public SoundController soundController;
+
+    protected Vector3 movementDelta = Vector3.zero;
+    private Vector3 prevPos = Vector3.zero;
+
     public PlayerController(bool isLocalPlayer,
         bool positionInterpolation, 
         bool rotationInterpolation) : base(isLocalPlayer, positionInterpolation, rotationInterpolation) { }
@@ -23,6 +28,19 @@ public abstract class PlayerController : InterpolationController
         id = _id;
         username = _username;
         health = maxHealth;
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        movementDelta = transform.position - prevPos;
+        soundController.Move(movementDelta);
+        prevPos = transform.position;
     }
 
     public bool IsAlive()

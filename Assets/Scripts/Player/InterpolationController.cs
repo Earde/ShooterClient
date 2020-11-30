@@ -15,9 +15,6 @@ public class InterpolationController : MonoBehaviour
 
     private bool isLocalPlayer;
 
-    private Vector3 prevPos = Vector3.zero;
-    private Vector3 movingDirection = Vector3.zero;
-
     public InterpolationController(bool _isLocalPlayer, bool positionInterpolation, bool rotationInterpolation)
     {
         isLocalPlayer = _isLocalPlayer;
@@ -32,7 +29,7 @@ public class InterpolationController : MonoBehaviour
 
     protected virtual void Start() { }
 
-    private void Update()
+    protected virtual void Update()
     {
         if (posEnabled)
         {
@@ -42,8 +39,6 @@ public class InterpolationController : MonoBehaviour
         {
             transform.rotation = GetCurrentRotation(Time.time - delay);
         }
-        movingDirection = transform.position - prevPos;
-        prevPos = transform.position;
     }
 
     public void AddPlayerState(PlayerState newState)
@@ -80,43 +75,5 @@ public class InterpolationController : MonoBehaviour
         if (toState == default || toState == null) return fromState._rotation;
         float lerp = (time - fromState._time) / (toState._time - fromState._time);
         return Quaternion.Lerp(fromState._rotation, toState._rotation, lerp);
-    }
-
-    public Vector2 GetCurrentMovingDirection()
-    {
-        Vector2 movDir = Vector3.zero;
-
-        if (movingDirection == Vector3.zero || movingDirection.magnitude < 0.00001f) return movDir;
-        
-        float angle = CalculateAngle180(this.transform.forward, movingDirection.normalized);
-        if (Mathf.Abs(angle) <= 50.0f)
-        {
-            movDir.y = 1.0f;
-        } else if (Mathf.Abs(angle) >= 130.0f)
-        {
-            movDir.y = -1.0f;
-        }
-        if (angle >= 40.0f && angle <= 140.0f)
-        {
-            movDir.x = 1.0f;
-        } else if (angle <= -40.0f && angle >= -140.0f)
-        {
-            movDir.x = -1.0f;
-        }
-
-        return movDir.normalized * 5.0f;
-    }
-
-    /// <summary>
-    /// Get euler angle between two direction (-180 to 180)
-    /// </summary>
-    /// <param name="fromDir"></param>
-    /// <param name="toDir"></param>
-    /// <returns></returns>
-    private static float CalculateAngle180(Vector3 fromDir, Vector3 toDir)
-    {
-        float angle = Quaternion.FromToRotation(fromDir, toDir).eulerAngles.y;
-        if (angle > 180) { return angle - 360f; }
-        return angle;
     }
 }

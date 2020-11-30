@@ -85,6 +85,22 @@ public class ClientHandle : MonoBehaviour
         }
     }
 
+    public static void PlayerShot(Packet packet)
+    {
+        int shooterId = packet.ReadInt();
+        float time = packet.ReadFloat();
+        Vector3 camPos = packet.ReadVector3();
+        Vector3 camForward = packet.ReadVector3();
+        if (GameManager.players.ContainsKey(shooterId))
+        {
+            EnemyController ec = GameManager.players[shooterId].GetComponent<EnemyController>();
+            if (ec != null)
+            {
+                ec.Shoot(time, camPos, camForward);
+            }
+        }
+    }
+
     public static void CreateItemSpawner(Packet packet)
     {
         int spawnerId = packet.ReadInt();

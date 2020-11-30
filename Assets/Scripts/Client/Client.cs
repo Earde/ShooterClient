@@ -74,6 +74,7 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.playerHealth, ClientHandle.PlayerHealth },
             { (int)ServerPackets.playerRespawn, ClientHandle.PlayerRespawned },
             { (int)ServerPackets.playerHitmark, ClientHandle.PlayerHitmark },
+            { (int)ServerPackets.playerShot, ClientHandle.PlayerShot },
             { (int)ServerPackets.createItemSpawner, ClientHandle.CreateItemSpawner },
             { (int)ServerPackets.itemSpawned, ClientHandle.ItemSpawned },
             { (int)ServerPackets.itemPickedUp, ClientHandle.ItemPickedUp },

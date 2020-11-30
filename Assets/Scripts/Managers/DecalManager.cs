@@ -7,13 +7,14 @@ public class DecalManager : MonoBehaviour
 {
     public static DecalManager instance;
 
-    public int decalCount = 250;
+    public int activeDecalCount = 250;
     public List<GameObject> decalObjects;
 
     private List<GameObject> decals;
 
     private Queue<int> activeDecals;
-    private int activeOffset = 20;
+
+    private int decalCount;
 
     private void Awake()
     {
@@ -30,12 +31,13 @@ public class DecalManager : MonoBehaviour
 
     private void Start()
     {
+        decalCount = activeDecalCount + 50;
         decals = new List<GameObject>();
-        activeDecals = new Queue<int>(decalCount - activeOffset);
-        int d = 0;
+        activeDecals = new Queue<int>(activeDecalCount);
+        int d = -1;
         for (int i = 0; i < decalCount; i++)
         {
-            if (i % (decalCount / decalObjects.Count) == decalCount / decalObjects.Count - 1) d++;
+            if (i % (decalCount / decalObjects.Count) == 0) d++;
             GameObject decal = Instantiate(decalObjects[d]);
             decal.SetActive(false);
             decals.Add(decal);
@@ -50,9 +52,10 @@ public class DecalManager : MonoBehaviour
         decal.transform.position = position;
         decal.transform.rotation = hitRotation;
         decal.SetActive(true);
+        decal.GetComponent<AudioSource>().Play();
 
         activeDecals.Enqueue(decals.IndexOf(decal));
-        if (activeDecals.Count > decalCount - activeOffset)
+        if (activeDecals.Count > activeDecalCount)
         {
             int i = activeDecals.Dequeue();
             decals[i].SetActive(false);
