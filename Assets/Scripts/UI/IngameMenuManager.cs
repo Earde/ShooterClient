@@ -12,18 +12,24 @@ public class IngameMenuManager : MonoBehaviour
     public Text networkStatusText;
     public Text fpsCounterText;
     public Text pingText;
+    public Text bulletText;
 
     public GameObject hitmarker;
 
     public GameObject settingsMenu;
     public InputField mouseSensitivityInput;
 
-    public float hudRefreshRate = 1.0f;
-
     private LocalPlayerController localPlayer = null;
     private bool settingsEnabled = false;
 
-    private float timer;
+    public float fpsRefreshRate = 1.0f;
+    private float fpsTimer;
+    private float fps = 60.0f;
+
+    public GameObject scoreboard;
+    public Text[] scoreboardRows;
+    private float scoreboardTimer;
+    private float scoreboardRefreshRate = 1.0f;
 
     private void Awake()
     {
@@ -49,12 +55,56 @@ public class IngameMenuManager : MonoBehaviour
             {
                 ToggleSettingsMenu();
             }
+            else if (!settingsEnabled && Input.GetKey(KeyCode.Tab))
+            {
+                ShowScoreboard(true);
+            } else
+            {
+                ShowScoreboard(false);
+            }
         }
-        if (Time.unscaledTime > timer)
+        if (Time.unscaledTime > fpsTimer)
         {
-            fpsCounterText.text = ((int)(1f / Time.unscaledDeltaTime)).ToString();
-            pingText.text = (0.0f).ToString();
-            timer = Time.unscaledTime + hudRefreshRate;
+            float curFps = 1f / Time.unscaledDeltaTime;
+            fps = fps * 0.8f + curFps * 0.2f;
+            fpsCounterText.text = ((int)Mathf.Round(fps)).ToString();
+            fpsTimer = Time.unscaledTime + fpsRefreshRate;
+        }
+        if (Time.time > scoreboardTimer)
+        {
+            UpdateScoreboard();
+            scoreboardTimer = Time.time + scoreboardRefreshRate;
+        }
+    }
+
+    private void ShowScoreboard(bool show)
+    {
+        if (show)
+        {
+            scoreboard.SetActive(true);
+            ingameMenu.SetActive(false);
+        } else if (scoreboard.activeInHierarchy)
+        {
+            scoreboard.SetActive(false);
+            ingameMenu.SetActive(true);
+        }
+    }
+
+    private void UpdateScoreboard()
+    {
+        for (int j = 0; j < scoreboardRows.Length; j++)
+        {
+            scoreboardRows[j].text = "";
+        }
+        int i = 0;
+        foreach (PlayerController p in GameManager.players.Values)
+        {
+            if (p != null)
+            {
+                scoreboardRows[i].text = p.GetScore();
+            }
+            i++;
+            if (i >= 8) break;
         }
     }
 
@@ -97,6 +147,16 @@ public class IngameMenuManager : MonoBehaviour
         if (hitmarker.activeInHierarchy) return;
         hitmarker.SetActive(true);
         StartCoroutine(HitmarkerCooldown());
+    }
+
+    public void SetRTT(float srtt)
+    {
+        pingText.text = ((int)Mathf.Round(srtt * 500.0f)).ToString();
+    }
+
+    public void SetBullets(int bullets, int maxBullets)
+    {
+        bulletText.text = $"{bullets}/{maxBullets}";
     }
 
     private IEnumerator HitmarkerCooldown()

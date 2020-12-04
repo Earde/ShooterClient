@@ -21,6 +21,8 @@ public class ClientHandle : MonoBehaviour
     public static void SyncTime(Packet packet)
     {
         int packetId = packet.ReadInt();
+        float srtt = packet.ReadFloat();
+        IngameMenuManager.instance.SetRTT(srtt);
         ClientSend.TimeSync(packetId);
     }
 
@@ -34,16 +36,22 @@ public class ClientHandle : MonoBehaviour
         GameManager.instance.SpawnPlayer(id, username, position, rotation);
     }
 
-    public static void PlayerPosition(Packet packet)
+    public static void PlayerData(Packet packet)
     {
         int id = packet.ReadInt();
         Vector3 _position = packet.ReadVector3();
         Quaternion _rotation = packet.ReadQuaternion();
         float _yVelocity = packet.ReadFloat();
         float _time = packet.ReadFloat();
+
+        int damageDone = packet.ReadInt();
+        int kills = packet.ReadInt();
+        int deaths = packet.ReadInt();
+
         if (GameManager.players.ContainsKey(id))
         {
             GameManager.players[id].SetLastAcceptedPosition(new PlayerState { _position = _position, _rotation = _rotation, _time = _time, _yVelocity = _yVelocity });
+            GameManager.players[id].SetScore(damageDone, kills, deaths);
         }
     }
 

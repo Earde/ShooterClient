@@ -37,6 +37,7 @@ public class EnemyGunController : GunController
             flash.SetActive(true);
             LocalHit(shootInputs.First().Position, shootInputs.First().Forward, 1000.0f, shootInputs.First().ShooterId);
             shootInputs.RemoveAt(0);
+            shootSound.Play();
         }
 
         Vector3 barrelPosition = transform.position +

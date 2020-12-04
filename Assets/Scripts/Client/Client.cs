@@ -42,12 +42,8 @@ public class Client : MonoBehaviour
     public void SetWelcomeReceived()
     {
         IngameMenuManager.instance.DisableIsConnecting();
-        string name = "DEBUG";
-        if (MainMenuManager.instance != null)
-        {
-            name = MainMenuManager.instance.usernameField.text;
-        }
-        ClientSend.WelcomeReceived(name);
+        string username = StaticCrossSceneData.Name != null ? StaticCrossSceneData.Name : "No name";
+        ClientSend.WelcomeReceived(username);
     }
 
     public void ConnectToServer()
@@ -69,7 +65,7 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.welcome, ClientHandle.Welcome },
             { (int)ServerPackets.timeSync, ClientHandle.SyncTime },
             { (int)ServerPackets.spawnPlayer, ClientHandle.SpawnPlayer },
-            { (int)ServerPackets.playerPosition, ClientHandle.PlayerPosition },
+            { (int)ServerPackets.playerData, ClientHandle.PlayerData },
             { (int)ServerPackets.playerDisconnected, ClientHandle.PlayerDisconnected },
             { (int)ServerPackets.playerHealth, ClientHandle.PlayerHealth },
             { (int)ServerPackets.playerRespawn, ClientHandle.PlayerRespawned },

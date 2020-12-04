@@ -33,16 +33,9 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
-    //private void Update()
-    //{
-    //    if (localPlayer)
-    //    {
-    //        healthText.text = Mathf.CeilToInt(localPlayer.health).ToString();
-    //    }
-    //}
-
     public void PlayGame(int level)
     {
+        StaticCrossSceneData.Name = usernameField.text;
         startMenu.SetActive(false);
         progressMenu.SetActive(true);
         usernameField.interactable = false;

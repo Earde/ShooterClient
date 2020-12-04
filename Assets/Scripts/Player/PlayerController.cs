@@ -11,6 +11,10 @@ public abstract class PlayerController : InterpolationController
     public float maxHealth;
     public int itemCount = 0;
 
+    private int damageDone = 0;
+    private int kills = 0;
+    private int deaths = 0;
+
     public SkinnedMeshRenderer meshRenderer;
     public GameObject colliders;
 
@@ -41,6 +45,18 @@ public abstract class PlayerController : InterpolationController
         movementDelta = transform.position - prevPos;
         soundController.Move(movementDelta);
         prevPos = transform.position;
+    }
+
+    public string GetScore()
+    {
+        return $"{username} K: {kills} D: {deaths} Damage: {damageDone}";
+    }
+
+    public void SetScore(int _damageDone, int _kills, int _deaths)
+    {
+        damageDone = _damageDone;
+        kills = _kills;
+        deaths = _deaths;
     }
 
     public bool IsAlive()

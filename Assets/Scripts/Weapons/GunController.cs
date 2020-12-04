@@ -6,10 +6,10 @@ using UnityEngine;
 
 public class GunController : MonoBehaviour
 {
+    public AudioSource shootSound;
+
     public GameObject muzzleFlashParticle;
     public Vector3 flashOffset = new Vector3(-0.035f, 0.4145f, 0.7936f);
-
-    public AudioSource shootSound;
 
     public float enemyDelay = 0.1f;
 

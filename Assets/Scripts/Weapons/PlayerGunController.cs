@@ -6,33 +6,51 @@ using UnityEngine;
 public class PlayerGunController : GunController
 {
     public Vector3 offset = new Vector3(0.275f, -0.6f, 0.614f);
+    public float shootCooldownTime = 0.4f;
 
     public bool isAutomatic = true;
+    public bool playSound = true;
+
+    #region recoil
+    public bool loopShooting = false;
+    public bool useRecoil = true;
+
+    public float maxRecoilAngle = 20.0f;
+    public float recoilTimeInc = 0.1f;
+    public float recoilSpeed = 10.0f;
+
+    private float curRecoilTime = 0.0f;
+    #endregion
+
+    private Camera cam;
+
+    private Transform weaponHolder;
 
     public float weaponLookDistance = 5.0f;
 
-    public float recoilAngleInc = 1f;
-    public float maxRecoilX = 20.0f;
-    public float recoilSpeed = 10.0f;
-
-    public float readyCooldown = 2.0f;
-    public float shootCooldown = 0.4f;
-
-    public bool useRecoil = true;
-    public bool playSound = true;
-    public bool loopShooting = false;
-
-    private float curRecoil = 0.0f;
     private float eulerX = 0.0f;
-
-    private Camera cam;
-    private Transform weaponHolder;
 
     private Renderer[] renderers;
 
     private bool isActive = false;
-    private bool isReadyToUse = false;
     private bool isReadyToShoot = true;
+
+    #region equip
+    public float equipCooldownTime = 2.0f;
+    public float equipRotations = 2.0f;
+
+    private bool isEquiped = false;
+    #endregion
+
+    #region reload
+    public float reloadCooldownTime = 3.0f;
+    public float reloadRotations = 2.0f;
+
+    private int curBullets = 20;
+    public int maxBullets = 20;
+
+    private Coroutine reloadCoroutine;
+    #endregion
 
     public void Initialize(Camera camera, Transform _weaponHolder)
     {
@@ -40,32 +58,52 @@ public class PlayerGunController : GunController
         weaponHolder = _weaponHolder;
         cam = camera;
         flash = Instantiate(muzzleFlashParticle);
+        curBullets = maxBullets;
     }
 
     public void SetActive(bool active)
     {
-        isReadyToUse = false;
+        if (reloadCoroutine != null) StopCoroutine(reloadCoroutine);
+        isEquiped = false;
         isReadyToShoot = true;
         isActive = active;
-        curRecoil = 0.0f;
+        curRecoilTime = 0.0f;
+        eulerX = 0.0f;
         foreach (Renderer r in renderers)
         {
             r.enabled = isActive;
         }
-        if (isActive) StartCoroutine(ReadyCooldown());
+        if (isActive) StartCoroutine(EquipCooldown());
+        if (curBullets <= 0)
+        {
+            reloadCoroutine = StartCoroutine(ReloadCooldown());
+        }
         Update();
     }
 
-    private IEnumerator ReadyCooldown()
+    private IEnumerator EquipCooldown()
     {
-        yield return new WaitForSeconds(readyCooldown);
-        isReadyToUse = true;
+        yield return new WaitForSeconds(equipCooldownTime);
+        eulerX = 0.0f;
+        curRecoilTime = 0.0f;
+        isEquiped = true;
     }
 
     private IEnumerator ShootCooldown()
     {
-        yield return new WaitForSeconds(shootCooldown);
+        yield return new WaitForSeconds(shootCooldownTime);
         isReadyToShoot = true;
+    }
+
+    private IEnumerator ReloadCooldown()
+    {
+        yield return new WaitForSeconds(reloadCooldownTime);
+        curBullets = maxBullets;
+    }
+
+    public int GetBullets()
+    {
+        return curBullets;
     }
 
     public void Shoot(Vector3 barrelPosition)
@@ -73,7 +111,7 @@ public class PlayerGunController : GunController
         if (!isActive) return;
         // Set shoot cooldown
         isReadyToShoot = false;
-        if (useRecoil) curRecoil += recoilAngleInc;
+        if (useRecoil) curRecoilTime += recoilTimeInc;
         StartCoroutine(ShootCooldown());
         // Send shot to network
         ClientSend.PlayerShoot(cam.transform.forward, Time.time, enemyDelay);
@@ -84,25 +122,61 @@ public class PlayerGunController : GunController
         flash.transform.rotation = transform.rotation;
         flash.SetActive(true);
         LocalHit(cam.transform.position, cam.transform.forward, 1000f);
+
+        curBullets--;
+        if (curBullets <= 0)
+        {
+            StartReload();
+        }
+    }
+
+    private void StartReload()
+    {
+        eulerX = 0;
+        curBullets = 0;
+        reloadCoroutine = StartCoroutine(ReloadCooldown());
     }
 
     protected override void Update()
     {
         base.Update();
 
+        if (curBullets > 0 && curBullets < maxBullets && Input.GetKeyDown(KeyCode.R))
+        {
+            StartReload();
+        }
+
         if (!isActive) return;
-        // Weapon
+        // Weapon position
         transform.position = weaponHolder.transform.position + cam.transform.forward * offset.z + cam.transform.right * offset.x + cam.transform.up * offset.y;
         transform.LookAt(cam.transform.position + cam.transform.forward * weaponLookDistance);
-        // Recoil
-        if (useRecoil)
+        // Equiping?
+        if (!isEquiped)
         {
-            float eX = transform.localEulerAngles.x;
-            curRecoil = Mathf.Clamp(curRecoil, 0.0f, maxRecoilX);
-            if (eulerX > curRecoil) eulerX = Mathf.Lerp(eulerX, curRecoil, Time.deltaTime * recoilSpeed);
-            else eulerX = Mathf.Lerp(eulerX, curRecoil, Time.deltaTime * recoilSpeed / 2);
-            transform.localEulerAngles = new Vector3(eX - eulerX, transform.localEulerAngles.y, transform.localEulerAngles.z);
-            curRecoil -= Time.deltaTime;
+            eulerX += Time.deltaTime * (360.0f / equipCooldownTime) * equipRotations;
+            transform.localEulerAngles = new Vector3(transform.localEulerAngles.x + eulerX, transform.localEulerAngles.y, transform.localEulerAngles.z);
+        }
+        // Reloading?
+        else if (curBullets <= 0)
+        {
+            eulerX += Time.deltaTime * (360.0f / reloadCooldownTime) * reloadRotations;
+            transform.localEulerAngles = new Vector3(transform.localEulerAngles.x - eulerX, transform.localEulerAngles.y, transform.localEulerAngles.z);
+        }
+        // Recoil
+        else if (useRecoil)
+        {
+            if (curRecoilTime > 0.0f)
+            {
+                eulerX = Mathf.Lerp(eulerX, maxRecoilAngle, Time.deltaTime * recoilSpeed);
+            } else
+            {
+                curRecoilTime = 0.0f;
+                eulerX = Mathf.Lerp(eulerX, 0.0f, Time.deltaTime * recoilSpeed / 2);
+            }
+            eulerX = Mathf.Clamp(eulerX, 0.0f, maxRecoilAngle);
+
+            transform.localEulerAngles = new Vector3(transform.localEulerAngles.x - eulerX, transform.localEulerAngles.y, transform.localEulerAngles.z);
+            curRecoilTime -= Time.deltaTime;
         }
         // Barrel position
         Vector3 barrelPosition = transform.position +
@@ -115,7 +189,8 @@ public class PlayerGunController : GunController
 
         if (loopShooting ||
             (isReadyToShoot &&
-            isReadyToUse &&
+            isEquiped &&
+            curBullets > 0 &&
             ((Input.GetMouseButton(0) && isAutomatic) || (Input.GetMouseButtonDown(0) && !isAutomatic))
             ))
         {

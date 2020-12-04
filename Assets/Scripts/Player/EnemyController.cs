@@ -6,6 +6,7 @@ using UnityEngine;
 public class EnemyController : PlayerController
 {
     public EnemyGunController gunController;
+    public MeshRenderer[] gunRenderers;
 
     public GameObject bloodPrefab;
     public int MaxBlood = 10;
@@ -14,9 +15,11 @@ public class EnemyController : PlayerController
 
     public EnemyAnimationController animationController;
 
-    private float colorLerpTime = 10f;
+    public float colorLerpTime = 2.5f;
+    
     private float colorTime = 0.0f;
-    private bool colorUp = true;
+    private Color prevColor = Color.green;
+    private Color toColor = Color.red;
 
     public EnemyController() : base(false, true, true) { }
 
@@ -69,26 +72,39 @@ public class EnemyController : PlayerController
     public override void Die()
     {
         meshRenderer.enabled = false;
+        foreach (MeshRenderer rd in gunRenderers)
+        {
+            rd.enabled = false;
+        }
         colliders.SetActive(false);
     }
 
     public override void Respawn()
     {
         meshRenderer.enabled = true;
+        foreach (MeshRenderer rd in gunRenderers)
+        {
+            rd.enabled = true;
+        }
         colliders.SetActive(true);
         base.Respawn();
     }
 
     public override void ChangeColor()
     {
-        if (colorUp) colorTime += Time.deltaTime;
-        else colorTime -= Time.deltaTime;
-        if (colorTime < 0.0f || colorTime >= colorLerpTime) colorUp = !colorUp;
+        if (colorTime >= colorLerpTime)
+        {
+            prevColor = toColor;
+            toColor = Random.ColorHSV();
+            colorTime = 0.0f;
+        }
 
         foreach (Material mat in meshRenderer.materials)
         {
-            mat.SetColor("_BaseColor", Color.Lerp(Color.green, Color.red, colorTime / colorLerpTime));
+            mat.SetColor("_BaseColor", Color.Lerp(prevColor, toColor, colorTime / colorLerpTime));
         }
+
+        colorTime += Time.deltaTime;
     }
 
     public override void Hitmark() { }

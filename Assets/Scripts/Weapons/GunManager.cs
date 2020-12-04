@@ -30,6 +30,7 @@ public class GunManager : MonoBehaviour
     private void Update()
     {
         int newGun = -1;
+        IngameMenuManager.instance.SetBullets(gunControllers[curGun].GetBullets(), gunControllers[curGun].maxBullets);
         for (int i = 0; i < guns.Length; i++)
         {
             if (Input.GetKey(KeyCode.Alpha1 + i))

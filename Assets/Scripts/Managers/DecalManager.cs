@@ -32,6 +32,7 @@ public class DecalManager : MonoBehaviour
     private void Start()
     {
         decalCount = activeDecalCount + 50;
+        decalCount += decalCount % decalObjects.Count;
         decals = new List<GameObject>();
         activeDecals = new Queue<int>(activeDecalCount);
         int d = -1;

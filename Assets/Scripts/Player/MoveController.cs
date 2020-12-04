@@ -144,10 +144,8 @@ public class MoveController : MonoBehaviour
         {
             _inputDirection.x += 1;
         }
-        if (_inputDirection.magnitude > 1.5f)
-        {
-            _inputDirection *= 0.7071f; //Keer door (wortel van 0.5 = 0.7071) om _inputDirection.magnitude van 1 te krijgen
-        }
+
+        if (_inputDirection.magnitude > 1.0f) _inputDirection /= _inputDirection.magnitude;
 
         Vector3 moveDirection = (tRight * _inputDirection.x * moveSpeed) + (tForward * _inputDirection.y * moveSpeed);
 
@@ -159,10 +157,7 @@ public class MoveController : MonoBehaviour
 
         moveDirection.y = yVelocity;
 
-        if (!characterController.isGrounded)
-        {
-            yVelocity -= gravity * moveDuration;
-        }
+        yVelocity -= gravity * moveDuration;
 
         characterController.Move(moveDirection * moveDuration);
     }
