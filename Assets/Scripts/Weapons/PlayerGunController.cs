@@ -11,20 +11,7 @@ public class PlayerGunController : GunController
     public bool isAutomatic = true;
     public bool playSound = true;
 
-    #region recoil
-    public bool loopShooting = false;
-    public bool useRecoil = true;
-
-    public float maxRecoilAngle = 20.0f;
-    public float recoilTimeInc = 0.1f;
-    public float recoilSpeed = 10.0f;
-
-    private float curRecoilTime = 0.0f;
-    #endregion
-
     private Camera cam;
-
-    private Transform weaponHolder;
 
     public float weaponLookDistance = 5.0f;
 
@@ -42,6 +29,29 @@ public class PlayerGunController : GunController
     private bool isEquiped = false;
     #endregion
 
+    #region recoil
+    public bool loopShooting = false;
+    public bool useRecoil = true;
+
+    public float maxRecoilAngle = 20.0f;
+    public float recoilTimeInc = 0.1f;
+    public float recoilSpeed = 10.0f;
+
+    private float curRecoilTime = 0.0f;
+    #endregion
+
+    #region zoom
+    private Transform weaponHolder;
+
+    public float zoomTime = 1.0f;
+    private float curZoomTime = 0.0f;
+    private Vector3 zoomTarget;
+    private Vector3 zoomInit;
+
+    public float fovZoomIncrease = 24.0f;
+    private float fovInit;
+    #endregion
+
     #region reload
     public float reloadCooldownTime = 3.0f;
     public float reloadRotations = 2.0f;
@@ -56,7 +66,10 @@ public class PlayerGunController : GunController
     {
         renderers = this.gameObject.GetComponentsInChildren<Renderer>();
         weaponHolder = _weaponHolder;
+        zoomInit = new Vector3(weaponHolder.localPosition.x, weaponHolder.localPosition.y, weaponHolder.localPosition.z);
+        zoomTarget = new Vector3(0.0f, weaponHolder.localPosition.y, weaponHolder.localPosition.z);
         cam = camera;
+        fovInit = cam.fieldOfView;
         flash = Instantiate(muzzleFlashParticle);
         curBullets = maxBullets;
     }
@@ -137,6 +150,12 @@ public class PlayerGunController : GunController
         reloadCoroutine = StartCoroutine(ReloadCooldown());
     }
 
+    private void UpdateZoom(float delta)
+    {
+        curZoomTime += delta;
+        curZoomTime = Mathf.Clamp(curZoomTime, 0.0f, zoomTime);
+    }
+
     protected override void Update()
     {
         base.Update();
@@ -186,6 +205,16 @@ public class PlayerGunController : GunController
         // Muzzle Flash position
         flash.transform.position = barrelPosition;
         flash.transform.rotation = transform.rotation;
+
+        if (isEquiped && curBullets > 0 && Input.GetMouseButton(1))
+        {
+            UpdateZoom(Time.deltaTime);
+        } else
+        {
+            UpdateZoom(-Time.deltaTime);
+        }
+        weaponHolder.transform.localPosition = Vector3.Lerp(zoomInit, zoomTarget, (curZoomTime / zoomTime));
+        cam.fieldOfView = Mathf.Lerp(fovInit, fovInit - fovZoomIncrease, (curZoomTime / zoomTime));
 
         if (loopShooting ||
             (isReadyToShoot &&
