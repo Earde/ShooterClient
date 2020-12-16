@@ -9,6 +9,7 @@ public class IngameMenuManager : MonoBehaviour
 
     [Header("Setup")]
     public GameObject ingameMenu;
+    public GameObject whenConnected;
     public Text healthText;
     public Text networkStatusText;
     public Text fpsCounterText;
@@ -59,6 +60,7 @@ public class IngameMenuManager : MonoBehaviour
     {
         if (localPlayer)
         {
+            if (!whenConnected.activeInHierarchy) whenConnected.SetActive(true);
             // Health
             healthText.text = Mathf.CeilToInt(localPlayer.health).ToString();
             // Settings Menu

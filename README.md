@@ -18,7 +18,9 @@ Features:
 
 Graphics:
 - HDRP
+- PBR Materials
 - Raytracing
+- Volumetric Fog
 - God rays
 - Water
 - (Planar) reflections
