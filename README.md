@@ -31,9 +31,10 @@ Networking:
 https://github.com/Earde/ShooterServer
 
 Images:
-![](Assets/GitImages/raytrace objects.png)
-![](Assets/GitImages/raytrace car1.png)
-![](Assets/GitImages/raytrace car2.png)
+
+![](Assets/GitImages/raytrace_objects.png)
+![](Assets/GitImages/raytrace_car1.png)
+![](Assets/GitImages/raytrace_car2.png)
 ![](Assets/GitImages/map.png)
 ![](Assets/GitImages/map1.png)
 ![](Assets/GitImages/map2.png)
