@@ -21,6 +21,10 @@ public class LocalPlayerController : PlayerController
         base.Update();
     }
 
+    /// <summary>
+    /// Update moveController with latest Server info about local player
+    /// </summary>
+    /// <param name="state"></param>
     public override void SetLastAcceptedPosition(PlayerState state)
     {
         moveController.SetLastAcceptedPosition(state);

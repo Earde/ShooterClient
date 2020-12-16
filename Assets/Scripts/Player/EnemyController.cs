@@ -42,12 +42,23 @@ public class EnemyController : PlayerController
         ChangeColor();
     }
 
+    /// <summary>
+    /// Enemy shot
+    /// </summary>
+    /// <param name="time"></param>
+    /// <param name="pos"></param>
+    /// <param name="forw"></param>
     public void Shoot(float time, Vector3 pos, Vector3 forw)
     {
         gunController.AddShot(time, pos, forw, id);
     }
 
-    public void TakeShot(Vector3 hitPoint, Quaternion hitRotation)
+    /// <summary>
+    /// Enemy is hit locally
+    /// </summary>
+    /// <param name="hitPoint"></param>
+    /// <param name="hitRotation"></param>
+    public void TakeLocalShot(Vector3 hitPoint, Quaternion hitRotation)
     {
         GameObject b = blood.FirstOrDefault(bl => !bl.activeInHierarchy);
         if (b != default && b != null)
@@ -58,9 +69,13 @@ public class EnemyController : PlayerController
         }
     }
 
+    /// <summary>
+    /// Set latest Server info about enemy player
+    /// </summary>
+    /// <param name="state"></param>
     public override void SetLastAcceptedPosition(PlayerState state)
     {
-        state._time = Time.time;
+        state._time = Time.time; //TODO: Hier naar kijken
         AddPlayerState(state);
     }
 
@@ -69,6 +84,9 @@ public class EnemyController : PlayerController
         base.SetHealth(_health);
     }
 
+    /// <summary>
+    /// Disable meshes/colliders
+    /// </summary>
     public override void Die()
     {
         meshRenderer.enabled = false;
@@ -79,6 +97,10 @@ public class EnemyController : PlayerController
         colliders.SetActive(false);
     }
 
+    /// <summary>
+    /// Respawn enemy
+    /// Enable meshes/colliders
+    /// </summary>
     public override void Respawn()
     {
         meshRenderer.enabled = true;
@@ -90,6 +112,10 @@ public class EnemyController : PlayerController
         base.Respawn();
     }
 
+    /// <summary>
+    /// Update random colors
+    /// Lerp between random random colors
+    /// </summary>
     public override void ChangeColor()
     {
         if (colorTime >= colorLerpTime)

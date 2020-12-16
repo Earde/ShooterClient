@@ -7,6 +7,11 @@ public class EnemyAnimationController : MonoBehaviour
     public Animator animator;
     public InterpolationController interpolationController;
 
+    /// <summary>
+    /// Update animator
+    /// </summary>
+    /// <param name="movementDirection"></param>
+    /// <param name="camForward"></param>
     public void Move(Vector3 movementDirection, Vector3 camForward)
     {
         Vector2 moveDir = GetCurrentMovingDirection(movementDirection, camForward);
@@ -14,6 +19,12 @@ public class EnemyAnimationController : MonoBehaviour
         animator.SetFloat("zVelocity", moveDir.y);
     }
 
+    /// <summary>
+    /// Get movement direction when facing to camera direction
+    /// </summary>
+    /// <param name="movementDirection"></param>
+    /// <param name="camForward"></param>
+    /// <returns></returns>
     public Vector2 GetCurrentMovingDirection(Vector3 movementDirection, Vector3 camForward)
     {
         Vector2 movDir = Vector3.zero;

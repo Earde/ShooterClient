@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Play random menu songs in a loop
+/// </summary>
 public class AudioLoop : MonoBehaviour
 {
     public GameObject audioObject;

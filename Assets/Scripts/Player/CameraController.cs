@@ -11,6 +11,10 @@ public class CameraController : MonoBehaviour
     private float verticalRotation;
     private float horizontalRotation;
 
+    /// <summary>
+    /// Set mouse sensitivity
+    /// </summary>
+    /// <param name="sens"></param>
     public void SetMouseSensitivity(float sens)
     {
         if (sens > 0.0f) { sensitivity = sens; }
@@ -28,6 +32,9 @@ public class CameraController : MonoBehaviour
         if (Cursor.lockState == CursorLockMode.Locked) { Look(); }
     }
 
+    /// <summary>
+    /// Mouse to camera movement
+    /// </summary>
     private void Look()
     {
         float mouseVertical = -Input.GetAxisRaw("Mouse Y");
@@ -42,6 +49,7 @@ public class CameraController : MonoBehaviour
         player.transform.rotation = Quaternion.Euler(0f, horizontalRotation, 0f);
     }
 
+    //Lock/Unlock cursor
     public void ToggleCursorMode(bool lockMouse)
     {
         if (lockMouse)

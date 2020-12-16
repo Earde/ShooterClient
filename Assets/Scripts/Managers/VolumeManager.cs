@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 
+/// <summary>
+/// Change Volume profile
+/// </summary>
 public class VolumeManager : MonoBehaviour
 {
     public Volume volume;

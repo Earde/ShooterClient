@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// AudioSources
+/// </summary>
 public class AudioController : MonoBehaviour
 {
     public AudioSource damageAudio, dieAudio;

@@ -5,31 +5,26 @@ using UnityEngine;
 
 public class PlayerGunController : GunController
 {
+    [Header("Setup")]
     public Vector3 offset = new Vector3(0.275f, -0.6f, 0.614f);
-    public float shootCooldownTime = 0.4f;
-
     public bool isAutomatic = true;
     public bool playSound = true;
-
-    private Camera cam;
-
     public float weaponLookDistance = 5.0f;
+    public float shootCooldownTime = 0.4f;
 
-    private float eulerX = 0.0f;
-
-    private Renderer[] renderers;
-
-    private bool isActive = false;
     private bool isReadyToShoot = true;
+    private Camera cam;
+    private float eulerX = 0.0f;
+    private Renderer[] renderers;
+    private bool isActive = false;
 
-    #region equip
+    [Header("Equip")]
     public float equipCooldownTime = 2.0f;
     public float equipRotations = 2.0f;
 
     private bool isEquiped = false;
-    #endregion
 
-    #region recoil
+    [Header("Recoil")]
     public bool loopShooting = false;
     public bool useRecoil = true;
 
@@ -38,29 +33,24 @@ public class PlayerGunController : GunController
     public float recoilSpeed = 10.0f;
 
     private float curRecoilTime = 0.0f;
-    #endregion
 
-    #region zoom
-    private Transform weaponHolder;
-
+    [Header("Zoom")]
     public float zoomTime = 1.0f;
     private float curZoomTime = 0.0f;
     private Vector3 zoomTarget;
     private Vector3 zoomInit;
-
     public float fovZoomIncrease = 24.0f;
-    private float fovInit;
-    #endregion
 
-    #region reload
+    private Transform weaponHolder;
+    private float fovInit;
+
+    [Header("Reload")]
     public float reloadCooldownTime = 3.0f;
     public float reloadRotations = 2.0f;
-
-    private int curBullets = 20;
     public int maxBullets = 20;
 
+    private int curBullets = 20;
     private Coroutine reloadCoroutine;
-    #endregion
 
     public void Initialize(Camera camera, Transform _weaponHolder)
     {
@@ -134,8 +124,9 @@ public class PlayerGunController : GunController
         flash.transform.position = barrelPosition;
         flash.transform.rotation = transform.rotation;
         flash.SetActive(true);
+        // Process shot locally
         LocalHit(cam.transform.position, cam.transform.forward, 1000f);
-
+        // Reduce bullets
         curBullets--;
         if (curBullets <= 0)
         {
@@ -205,7 +196,7 @@ public class PlayerGunController : GunController
         // Muzzle Flash position
         flash.transform.position = barrelPosition;
         flash.transform.rotation = transform.rotation;
-
+        //Zoom
         if (isEquiped && curBullets > 0 && Input.GetMouseButton(1))
         {
             UpdateZoom(Time.deltaTime);
@@ -215,7 +206,7 @@ public class PlayerGunController : GunController
         }
         weaponHolder.transform.localPosition = Vector3.Lerp(zoomInit, zoomTarget, (curZoomTime / zoomTime));
         cam.fieldOfView = Mathf.Lerp(fovInit, fovInit - fovZoomIncrease, (curZoomTime / zoomTime));
-
+        //Shoot
         if (loopShooting ||
             (isReadyToShoot &&
             isEquiped &&

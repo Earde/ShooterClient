@@ -5,6 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 
+/// <summary>
+/// User input at client game time
+/// tRight, tForward are camera directions
+/// </summary>
 class UserInput
 {
     public Vector3 tRight { get; set; }

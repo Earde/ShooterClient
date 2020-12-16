@@ -16,6 +16,7 @@ public class DecalManager : MonoBehaviour
 
     private int decalCount;
 
+    //Singleton
     private void Awake()
     {
         if (instance == null)
@@ -45,13 +46,18 @@ public class DecalManager : MonoBehaviour
         }
     }
 
-    public void SetBulletDecal(Vector3 position, Quaternion hitRotation)
+    /// <summary>
+    /// Set bullet decal at position, normal
+    /// </summary>
+    /// <param name="position"></param>
+    /// <param name="normal"></param>
+    public void SetBulletDecal(Vector3 position, Quaternion normal)
     {
         GameObject[] nonActiveDecals = decals.Where(d => !d.activeInHierarchy).ToArray();
         GameObject decal = nonActiveDecals[Random.Range(0, nonActiveDecals.Length)];
 
         decal.transform.position = position;
-        decal.transform.rotation = hitRotation;
+        decal.transform.rotation = normal;
         decal.SetActive(true);
         decal.GetComponent<AudioSource>().Play();
 

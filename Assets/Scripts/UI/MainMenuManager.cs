@@ -20,6 +20,7 @@ public class MainMenuManager : MonoBehaviour
         progressMenu.SetActive(false);
     }
 
+    //Singleton
     private void Awake()
     {
         if (instance == null)
@@ -33,6 +34,11 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Load new Scene
+    /// Called from UI button
+    /// </summary>
+    /// <param name="level"></param>
     public void PlayGame(int level)
     {
         StaticCrossSceneData.Name = usernameField.text;

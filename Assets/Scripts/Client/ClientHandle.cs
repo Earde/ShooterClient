@@ -22,7 +22,7 @@ public class ClientHandle : MonoBehaviour
     {
         int packetId = packet.ReadInt();
         float srtt = packet.ReadFloat();
-        IngameMenuManager.instance.SetRTT(srtt);
+        IngameMenuManager.instance.SetNetworkLatency(srtt);
         ClientSend.TimeSync(packetId);
     }
 

@@ -19,6 +19,7 @@ public class SitController : MonoBehaviour
     {
         if (!camera.enabled) return;
 
+        // Sit
         Collider[] hits = Physics.OverlapSphere(transform.position, sitRadius, layerMask);
         if (hits.Length > 0)
         {

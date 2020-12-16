@@ -39,6 +39,9 @@ public abstract class PlayerController : InterpolationController
         base.Start();
     }
 
+    /// <summary>
+    /// Send movement direction to soundController
+    /// </summary>
     protected override void Update()
     {
         base.Update();
@@ -47,11 +50,21 @@ public abstract class PlayerController : InterpolationController
         prevPos = transform.position;
     }
 
+    /// <summary>
+    /// Get KDA
+    /// </summary>
+    /// <returns></returns>
     public string GetScore()
     {
         return $"{username} K: {kills} D: {deaths} Damage: {damageDone}";
     }
 
+    /// <summary>
+    /// Set score from server
+    /// </summary>
+    /// <param name="_damageDone"></param>
+    /// <param name="_kills"></param>
+    /// <param name="_deaths"></param>
     public void SetScore(int _damageDone, int _kills, int _deaths)
     {
         damageDone = _damageDone;
@@ -59,17 +72,29 @@ public abstract class PlayerController : InterpolationController
         deaths = _deaths;
     }
 
+    /// <summary>
+    /// Alive?
+    /// </summary>
+    /// <returns></returns>
     public bool IsAlive()
     {
         return health > 0.0f;
     }
 
+    /// <summary>
+    /// Update health
+    /// Die if health < 0
+    /// </summary>
+    /// <param name="_health"></param>
     public virtual void SetHealth(float _health)
     {
         health = _health;
         if (health <= 0f) Die();
     }
 
+    /// <summary>
+    /// Respawn player
+    /// </summary>
     public virtual void Respawn()
     {
         SetHealth(maxHealth);

@@ -27,6 +27,7 @@ public class DoorController : MonoBehaviour
 
     void Update()
     {
+        //Open/close door
         if (!isMoving && Input.GetKeyDown(KeyCode.E))
         {
             isMoving = true;
@@ -34,6 +35,7 @@ public class DoorController : MonoBehaviour
             if (isOpen) targetPosition = upPosition;
             else targetPosition = basePosition;
         }
+        //Move door
         if (isMoving)
         {
             float step = speed * Time.deltaTime;

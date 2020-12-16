@@ -16,6 +16,10 @@ public class SecretRoomController : MonoBehaviour
         Activate(false);
     }
 
+    /// <summary>
+    /// Enable raytracing room
+    /// </summary>
+    /// <param name="a"></param>
     private void Activate(bool a)
     {
         volume.enabled = a;

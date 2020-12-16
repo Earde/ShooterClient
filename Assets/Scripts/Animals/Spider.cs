@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Walking & Jumping spiders walking at constant y to random x,z
+/// </summary>
 public class Spider : MonoBehaviour
 {
     public Animator animator;
     public float speed = 10.0f;
     public float walkDistance = 10.0f;
-
-    /*TODO: Blending animation from move left (-1), forward/backward (0) till move right (+1)*/
 
     private State state;
     private Vector3 target;

@@ -36,6 +36,10 @@ public class Sittable : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Change camera to Sittable cam
+    /// </summary>
+    /// <param name="oldCam"></param>
     public void Sit(Camera oldCam)
     {
         tempCam = oldCam;
@@ -43,6 +47,9 @@ public class Sittable : MonoBehaviour
         camera.enabled = true;
     }
 
+    /// <summary>
+    /// Change camera back
+    /// </summary>
     public void Standup()
     {
         camera.enabled = false;

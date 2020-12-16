@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public GameObject itemSpawnerPrefab;
     public GameObject projectilePrefab;
 
+    //Singleton
     private void Awake()
     {
         if (instance == null)
@@ -28,6 +29,13 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Initialize player after server accepted client
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="username"></param>
+    /// <param name="position"></param>
+    /// <param name="rotation"></param>
     public void SpawnPlayer(int id, string username, Vector3 position, Quaternion rotation)
     {
         GameObject player;
@@ -46,6 +54,12 @@ public class GameManager : MonoBehaviour
         players.Add(id, player.GetComponent<PlayerController>());
     }
 
+    /// <summary>
+    /// Initialize Item Spawner
+    /// </summary>
+    /// <param name="spawnerId"></param>
+    /// <param name="position"></param>
+    /// <param name="hasItem"></param>
     public void CreateItemSpawner(int spawnerId, Vector3 position, bool hasItem)
     {
         GameObject spawner = Instantiate(itemSpawnerPrefab, position, itemSpawnerPrefab.transform.rotation);
@@ -53,6 +67,11 @@ public class GameManager : MonoBehaviour
         itemSpawners.Add(spawnerId, spawner.GetComponent<ItemSpawner>());
     }
 
+    /// <summary>
+    /// Initialize projectile
+    /// </summary>
+    /// <param name="id"></param>
+    /// <param name="position"></param>
     public void SpawnProjectile(int id, Vector3 position)
     {
         GameObject projectile = Instantiate(projectilePrefab, position, Quaternion.identity);

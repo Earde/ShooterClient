@@ -17,6 +17,10 @@ public class ClientSend : MonoBehaviour
     }
 
     #region Packets
+    /// <summary>
+    /// Send WelcomeReceived to server (player name)
+    /// </summary>
+    /// <param name="name"></param>
     public static void WelcomeReceived(string name)
     {
         using (Packet packet = new Packet((int)ClientPackets.welcomeReceived))
@@ -28,6 +32,11 @@ public class ClientSend : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Send TimeSync to server (id of server TimeSyncPacket)
+    /// Send client game time to server for RTT and client/server time mismatch
+    /// </summary>
+    /// <param name="packetId"></param>
     public static void TimeSync(int packetId)
     {
         using (Packet packet = new Packet((int)ClientPackets.timeSync))
@@ -38,6 +47,12 @@ public class ClientSend : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Send Movement to server (keyboard inputs, rotation, Client game time)
+    /// </summary>
+    /// <param name="_inputs"></param>
+    /// <param name="rotation"></param>
+    /// <param name="time"></param>
     public static void PlayerMovement(bool[] _inputs, Quaternion rotation, float time)
     {
         using (Packet _packet = new Packet((int)ClientPackets.playerMovement))
@@ -54,6 +69,11 @@ public class ClientSend : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Send ChangeGun to server (client game time, index of gun)
+    /// </summary>
+    /// <param name="time"></param>
+    /// <param name="gunId"></param>
     public static void PlayerChangeGun(float time, int gunId)
     {
         using (Packet packet = new Packet((int)ClientPackets.playerChangeGun))
@@ -65,6 +85,12 @@ public class ClientSend : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Send Shoot to server (camera direction, client game time, enemy interpolation delay)
+    /// </summary>
+    /// <param name="facing"></param>
+    /// <param name="time"></param>
+    /// <param name="enemyDelay"></param>
     public static void PlayerShoot(Vector3 facing, float time, float enemyDelay)
     {
         using (Packet packet = new Packet((int)ClientPackets.playerShoot))
@@ -77,6 +103,10 @@ public class ClientSend : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Send ThrowItem to server (camera direction)
+    /// </summary>
+    /// <param name="facing"></param>
     public static void PlayerThrowItem(Vector3 facing)
     {
         using (Packet packet = new Packet((int)ClientPackets.playerThrowItem))

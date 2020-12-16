@@ -21,6 +21,7 @@ public class GunController : MonoBehaviour
         hits = hits.OrderBy(h => h.distance).ToArray();
         for (int i = 0; i < hits.Length; i++)
         {
+            // Shooter hit Enemy local
             if (hits[i].collider.CompareTag("Enemy"))
             {
                 EnemyController ec = hits[i].collider.GetComponentInParent<EnemyController>();
@@ -28,8 +29,9 @@ public class GunController : MonoBehaviour
                 {
                     continue;
                 }
-                ec.TakeShot(hits[i].point + hits[i].normal * 0.001f, Quaternion.FromToRotation(Vector3.up, hits[i].normal));
+                ec.TakeLocalShot(hits[i].point + hits[i].normal * 0.001f, Quaternion.FromToRotation(Vector3.up, hits[i].normal));
             }
+            // Shooter hit Map local
             else if (hits[i].collider.GetType() == typeof(MeshCollider) && hits[i].transform.gameObject.layer == LayerMask.NameToLayer("Map"))
             {
                 DecalManager.instance.SetBulletDecal(hits[i].point + hits[i].normal * 0.001f, Quaternion.FromToRotation(Vector3.back, hits[i].normal));
